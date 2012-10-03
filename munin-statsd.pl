@@ -53,13 +53,16 @@ my $statsd_sock	= new IO::Socket::INET (
 	Proto		=> 'udp'
 ) or die "Error creating socket to statsd!\n";
 
+my $packet = "";
+
 foreach my $plugin (@plugins) {
 	my %data = $node->fetch($plugin);
 	foreach my $stat (keys %data) {
-		my $packet = $schemabase."$fqdn.$plugin.$stat:".$data{$stat}."|g\n";
-		$statsd_sock->send($packet);
+		$packet .= $schemabase."$fqdn.$plugin.$stat:".$data{$stat}."|g\n";
 	}
 }
+
+$statsd_sock->send($packet);
 
 $statsd_sock->close();
 $node->quit;
