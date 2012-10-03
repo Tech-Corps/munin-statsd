@@ -32,8 +32,8 @@ use IO::Socket::INET;
 
 # Configuration
 my $schemabase		= "node.";
-my $graphitehost	= "graphitehost.company.com";
-my $graphiteport	= 8125;
+my $statsdhost		= "statsd.company.com";
+my $statsdport		= 8125;
 my $muninhost		= "localhost";
 my $muninport		= 4949;
 
@@ -49,7 +49,7 @@ my $fqdn		= join(".", reverse(split(/\./, $hostnames[0])));
 my @plugins		= $node->list();
 
 my $statsd_sock	= new IO::Socket::INET (
-	PeerAddr	=> $graphitehost.':'.$graphiteport,
+	PeerAddr	=> $statsdhost.':'.$statsdport,
 	Proto		=> 'udp'
 ) or die "Error creating socket to statsd!\n";
 
