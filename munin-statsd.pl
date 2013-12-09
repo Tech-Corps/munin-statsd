@@ -36,6 +36,10 @@ my $statsdhost		= "statsd.company.com";
 my $statsdport		= 8125;
 my $muninhost		= "localhost";
 my $muninport		= 4949;
+my $timeout             = 10;
+
+$SIG{ALRM} = sub { die "Timeout reached.\n" };
+alarm $timeout;
 
 
 $|++;
