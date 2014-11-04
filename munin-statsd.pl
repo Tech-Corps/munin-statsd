@@ -6,7 +6,7 @@
 # A Munin-Node to StatsD bridge
 #
 #    Author:: Brian Staszewski (<brian.staszewski@tech-corps.com>)
-# Copyright:: Copyright (c) 2012 Tech-Corps, Inc.
+# Copyright:: Copyright (c) 2014 Tech-Corps, Inc.
 #   License:: GNU General Public License version 2 or later
 # 
 # This program and entire repository is free software; you can
@@ -36,7 +36,7 @@ my $statsdhost		= "statsd.company.com";
 my $statsdport		= 8125;
 my $muninhost		= "localhost";
 my $muninport		= 4949;
-my $timeout             = 10;
+my $timeout			= 10;
 
 $SIG{ALRM} = sub { die "Timeout reached.\n" };
 alarm $timeout;
@@ -57,16 +57,14 @@ my $statsd_sock	= new IO::Socket::INET (
 	Proto		=> 'udp'
 ) or die "Error creating socket to statsd!\n";
 
-my $packet = "";
-
 foreach my $plugin (@plugins) {
 	my %data = $node->fetch($plugin);
 	foreach my $stat (keys %data) {
-		$packet .= $schemabase."$fqdn.$plugin.$stat:".$data{$stat}."|g\n";
+		my $packet = $schemabase."$fqdn.$plugin.$stat:".$data{$stat}."|g\n";
+		$statsd_sock->send($packet);
 	}
 }
 
-$statsd_sock->send($packet);
 
 $statsd_sock->close();
 $node->quit;
